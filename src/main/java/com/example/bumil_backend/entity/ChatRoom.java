@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -40,8 +42,15 @@ public class ChatRoom {
     @JoinColumn(name = "user_id", nullable = false)
     private Users author;
 
-    @OneToOne(mappedBy = "chatRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private ChatMessage chatMessage;
+    @OneToMany(
+            mappedBy = "chatRoom",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
+    @Builder.Default
+    private List<ChatMessage> chatMessages = new ArrayList<>();
+
 
     @PrePersist
     public void prePersist(){

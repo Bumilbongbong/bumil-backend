@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,24 +50,27 @@ public class Users {
     private RefreshToken refreshToken;
 
     @OneToMany(
-            mappedBy = "user",
-            cascade = {
-                CascadeType.PERSIST,
-                CascadeType.MERGE
-            },
-            fetch = FetchType.LAZY
-    )
-    private ChatRoom chatRoom;
-
-    @OneToMany(
-            mappedBy = "user",
+            mappedBy = "author",
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
             },
             fetch = FetchType.LAZY
     )
-    private ChatMessage chatMessage;
+    @Builder.Default
+    private List<ChatRoom> chatRooms = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "sender",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            fetch = FetchType.LAZY
+    )
+    @Builder.Default
+    private List<ChatMessage> chatMessages = new ArrayList<>();
+
 
     @PrePersist
     public void prePersist(){

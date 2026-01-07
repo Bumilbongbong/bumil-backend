@@ -83,7 +83,7 @@ public class UserService {
         user.updatePassword(newHashedPassword);
 
         return UpdateUserPasswordResponse.builder()
-                .id(user.getId())
+                .userId(user.getId())
                 .build();
     }
 }
