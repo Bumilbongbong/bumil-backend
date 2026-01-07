@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -61,29 +62,60 @@ public class AuthService {
 
     @Transactional
     public LoginResponse login(LoginRequest request) {
-        // ID, PW 검증
+
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
         );
 
         Users user = userRepository.findByEmailAndIsDeletedFalse(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User doesn't exist"));
 
-        String accessToken = tokenProvider.createAccessToken(user.getEmail(), String.valueOf(user.getRole()));
+        //AT 생성
+        String accessToken = tokenProvider.createAccessToken(
+                user.getEmail(),
+                user.getRole().name()
+        );
 
-        String refreshToken = tokenProvider.createRefreshToken(request.getEmail(), String.valueOf(user.getRole()));
+        // RT 생성
+        Optional<RefreshToken> optionalRefreshToken =
+                refreshTokenRepository.findByUser(user);
 
-        RefreshToken saveRefreshToken = RefreshToken.builder()
-                .token(refreshToken)
-                .expiryDatetime(LocalDateTime.now().plusDays(1))
-                .user(user)
-                .build();
+        String refreshTokenValue;
 
-        refreshTokenRepository.save(saveRefreshToken);
+        // 존재할 경우 Update
+        if (optionalRefreshToken.isPresent()) {
+            RefreshToken refreshToken = optionalRefreshToken.get();
+
+            refreshTokenValue = tokenProvider.createRefreshToken(
+                    user.getEmail(),
+                    user.getRole().name()
+            );
+
+            refreshToken.update(
+                    refreshTokenValue
+            );
+
+        } else { // 존재하지 않을 경우 Create
+            refreshTokenValue = tokenProvider.createRefreshToken(
+                    user.getEmail(),
+                    user.getRole().name()
+            );
+
+            RefreshToken refreshToken = RefreshToken.builder()
+                    .token(refreshTokenValue)
+                    .expiryDatetime(LocalDateTime.now().plusDays(1))
+                    .user(user)
+                    .build();
+
+            refreshTokenRepository.save(refreshToken);
+        }
 
         return LoginResponse.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .refreshToken(refreshTokenValue)
                 .build();
     }
 
