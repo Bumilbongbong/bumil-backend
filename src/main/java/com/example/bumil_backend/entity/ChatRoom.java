@@ -75,4 +75,3 @@ public class ChatRoom {
         this.isDeleted = true;
     }
 }
- 
