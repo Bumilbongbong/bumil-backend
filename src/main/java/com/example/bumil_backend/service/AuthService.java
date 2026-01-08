@@ -15,7 +15,6 @@ import com.example.bumil_backend.dto.user.request.SignupRequest;
 import com.example.bumil_backend.dto.user.response.LoginResponse;
 import com.example.bumil_backend.dto.user.response.SignupResponse;
 import com.example.bumil_backend.entity.RefreshToken;
-import com.example.bumil_backend.entity.Role;
 import com.example.bumil_backend.entity.Users;
 import com.example.bumil_backend.repository.RefreshTokenRepository;
 import com.example.bumil_backend.repository.UserRepository;

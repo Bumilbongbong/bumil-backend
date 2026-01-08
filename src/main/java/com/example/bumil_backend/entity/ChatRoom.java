@@ -1,5 +1,6 @@
 package com.example.bumil_backend.entity;
 
+import com.example.bumil_backend.enums.Tag;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

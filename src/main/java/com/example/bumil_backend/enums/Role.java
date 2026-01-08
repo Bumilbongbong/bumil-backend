@@ -1,4 +1,4 @@
-package com.example.bumil_backend.entity;
+package com.example.bumil_backend.enums;
 
 public enum Role {
     ADMIN,
