@@ -1,6 +1,8 @@
 package com.example.bumil_backend.service;
 
 import com.example.bumil_backend.common.exception.BadRequestException;
+import com.example.bumil_backend.common.exception.ChatRoomAccessDeniedException;
+import com.example.bumil_backend.common.exception.ChatRoomNotFoundException;
 import com.example.bumil_backend.common.exception.ResourceNotFoundException;
 import com.example.bumil_backend.dto.chat.request.ChatCreateRequest;
 import com.example.bumil_backend.dto.chat.request.ChatCloseRequest;
@@ -11,9 +13,11 @@ import com.example.bumil_backend.entity.ChatRoom;
 import com.example.bumil_backend.entity.DateFilter;
 import com.example.bumil_backend.entity.Users;
 import com.example.bumil_backend.enums.ChatTags;
+import com.example.bumil_backend.enums.Role;
 import com.example.bumil_backend.enums.Tag;
 import com.example.bumil_backend.repository.ChatRoomRepository;
 import com.example.bumil_backend.repository.UserRepository;
+import com.example.bumil_backend.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
@@ -30,6 +34,7 @@ public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
+    private final SecurityUtils securityUtils;
 
     // 채팅방 생성
     public ChatCreateResponse createChat(ChatCreateRequest request) {
@@ -118,7 +123,6 @@ public class ChatService {
         Tag searchTag = (tag != null && !tag.isBlank()) ? Tag.valueOf(tag.toUpperCase()) : null;
 
         List<ChatRoom> chatRooms = chatRoomRepository.findByTagAndAuthorAndIsDeletedFalse(searchTag, author, sort);
-
         return chatRooms.stream()
                 .map(chatRoom -> ChatListResponse.builder()
                         .chatRoomId(chatRoom.getId())
@@ -181,5 +185,26 @@ public class ChatService {
             chatRoom.setPublic(request.getIsPublic());
         }
     }
+
+    // 채팅 삭제
+    @Transactional
+    public void deleteChat(Long chatRoomId) {
+        Users user = securityUtils.getCurrentUser();
+
+        ChatRoom chatRoom = chatRoomRepository.findByIdAndIsDeletedFalse(chatRoomId)
+                .orElseThrow(() -> new ChatRoomNotFoundException("이미 삭제된 채팅방 입니다."));
+        // 관리자 or 작성자
+        boolean isAuthor =
+                chatRoom.getAuthor().getId().equals(user.getId());
+
+        boolean isAdmin =
+                user.getRole() == Role.ADMIN;
+
+        if (!isAuthor && !isAdmin) {
+            throw new ChatRoomAccessDeniedException("해당 채팅방에 대한 권한이 없습니다.");
+        }
+        chatRoom.delete();
+    }
+
 
 }

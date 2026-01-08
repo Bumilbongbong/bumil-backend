@@ -67,4 +67,5 @@ public class AdminController {
     public ResponseEntity<ApiResponse<List<GetAllUsersResponse>>> getAllUsers(){
         return ApiResponse.ok(adminService.getAllUsers(), "모든 유저 조회에 성공하였습니다.");
     }
+
 }

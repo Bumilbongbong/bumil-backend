@@ -7,6 +7,7 @@ import com.example.bumil_backend.dto.chat.request.ChatSettingRequest;
 import com.example.bumil_backend.dto.chat.response.ChatCreateResponse;
 import com.example.bumil_backend.dto.chat.response.ChatListResponse;
 import com.example.bumil_backend.service.ChatService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -63,5 +64,18 @@ public class ChatController {
         chatService.updateChatSetting(request);
         return ApiResponse.ok(null, "채팅 설정이 변경되었습니다.");
     }
+
+    @PatchMapping("/{chatRoomId}")
+    @Operation(summary = "채팅 삭제", description = "관리자와 작성자만 삭제할 수 있습니다.")
+    public ResponseEntity<ApiResponse<Void>> deleteChat(@PathVariable Long chatRoomId) {
+        chatService.deleteChat(chatRoomId);
+        return ApiResponse.ok(null, "채팅이 삭제되었습니다.");
+    }
+
+
+
+
+
+
 
 }

@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     // 모든 채팅 조회 + 태그 필터
@@ -19,8 +20,13 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             ChatTags chatTag,
             Pageable pageable
     );
+
+    // 삭제되지 않은 채팅방 조회
+    Optional<ChatRoom> findByIdAndIsDeletedFalse(Long id);
+
     // 모든 채팅 조회
     Page<ChatRoom> findAllByIsDeletedFalse(Pageable pageable);
+
 
     @Query("""
             SELECT c FROM ChatRoom c
