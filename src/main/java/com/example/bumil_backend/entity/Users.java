@@ -32,6 +32,7 @@ public class Users {
     @Column(nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
     @Enumerated(EnumType.STRING)
