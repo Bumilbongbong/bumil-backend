@@ -4,7 +4,6 @@ import com.example.bumil_backend.common.exception.BadRequestException;
 import com.example.bumil_backend.common.exception.ResourceNotFoundException;
 import com.example.bumil_backend.dto.chat.request.ChatCreateRequest;
 import com.example.bumil_backend.dto.chat.request.ChatCloseRequest;
-import com.example.bumil_backend.dto.chat.request.ChatSettingRequest;
 import com.example.bumil_backend.dto.chat.response.ChatCreateResponse;
 import com.example.bumil_backend.entity.ChatRoom;
 import com.example.bumil_backend.entity.Tag;
@@ -64,34 +63,5 @@ public class ChatService {
         }
 
         chatRoom.setTag(request.getTag());
-    }
-
-    public void updateChatSetting(ChatSettingRequest request) {
-
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-
-        Users user = userRepository.findByEmailAndIsDeletedFalse(email)
-                .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
-
-        ChatRoom chatRoom = chatRoomRepository.findById(request.getChatRoomId())
-                .orElseThrow(() -> new ResourceNotFoundException("채팅방을 찾을 수 없습니다."));
-
-        if (!chatRoom.getAuthor().getId().equals(user.getId())) {
-            throw new BadRequestException("채팅 설정 변경 권한이 없습니다.");
-        }
-
-        if (chatRoom.getTag() == Tag.IN_PROGRESS) {
-            throw new BadRequestException("채팅 처리가 완료된 후에만 설정할 수 있습니다.");
-        }
-
-        if (request.getIsAnonymous() != null) {
-            chatRoom.setAnonymous(request.getIsAnonymous());
-        }
-
-        if (request.getIsPublic() != null) {
-            chatRoom.setPublic(request.getIsPublic());
-        }
     }
 }
