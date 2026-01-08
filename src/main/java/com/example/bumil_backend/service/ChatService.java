@@ -63,16 +63,15 @@ public class ChatService {
         userRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 유저입니다."));
 
-        // 1. 유효성 검증 (잘못된 값이 들어오면 여기서 cut)
+        // 유효성 검증
         validateFilters(dateFilter, tag);
 
-        // 2. 정렬 조건 설정 (null-safe한 비교)
-        Sort sort = "OLD".equals(dateFilter) ? Sort.by("createdAt").ascending() : Sort.by("createdAt").descending();
+        // 정렬 조건
+        Sort sort = "OLDEST".equals(dateFilter) ? Sort.by("createdAt").ascending() : Sort.by("createdAt").descending();
 
-        // 3. String을 Enum으로 변환 (tag가 null이면 searchTag도 null)
+        // String -> Enum
         Tag searchTag = (tag != null && !tag.isBlank()) ? Tag.valueOf(tag.toUpperCase()) : null;
 
-        // 4. Repository 호출 (tag가 null이면 쿼리에서 'IS NULL' 조건에 의해 전체 조회됨)
         List<ChatRoom> chatRooms = chatRoomRepository.findByTag(searchTag, sort);
 
         return chatRooms.stream()
