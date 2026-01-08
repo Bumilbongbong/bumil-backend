@@ -1,5 +1,6 @@
 package com.example.bumil_backend.security;
 
+import com.example.bumil_backend.common.exception.NotAcceptableUserException;
 import com.example.bumil_backend.common.exception.NotLoggedInException;
 import com.example.bumil_backend.entity.Users;
 
@@ -45,7 +46,7 @@ public class SecurityUtils {
     public Users getCurrentAdmin() {
         Users user = getCurrentUser();
         if (user.getRole() != Role.ADMIN) {
-            throw new AccessDeniedUserException("관리자 계정만 사용할 수 있는 기능입니다.");
+            throw new NotAcceptableUserException("관리자 계정만 사용할 수 있는 기능입니다.");
         }
         return user;
     }
