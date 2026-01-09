@@ -80,6 +80,7 @@ public class Users {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @Builder.Default
     private List<ChatRoomReaction> reactions = new ArrayList<>();
 
 

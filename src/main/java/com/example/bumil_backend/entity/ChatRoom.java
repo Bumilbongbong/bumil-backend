@@ -67,6 +67,7 @@ public class ChatRoom {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @Builder.Default
     private List<ChatRoomReaction> reactions = new ArrayList<>();
 
 
