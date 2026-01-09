@@ -74,7 +74,7 @@ public class MessageController {
     }
 
     @GetMapping("/{chatRoomId}")
-    @Operation(summary = "채팅방 메시지 목록 조회", description = "")
+    @Operation(summary = "Get messages", description = "채팅방 메시지 목록 조회 API")
     public ResponseEntity<ApiResponse<MessageListDto>> getMessages
             (@PathVariable Long chatRoomId,
              @RequestParam(required = false) Pageable pageable
@@ -83,9 +83,4 @@ public class MessageController {
         return ApiResponse.ok(result, "채팅방 메시지 목록이 조회되었습니다.");
 
     }
-
-
-
-
-
 }

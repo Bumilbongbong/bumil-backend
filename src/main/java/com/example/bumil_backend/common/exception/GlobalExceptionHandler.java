@@ -29,20 +29,6 @@ public class GlobalExceptionHandler {
         return ApiResponse.fail(e.getMessage(), HttpStatus.FORBIDDEN);
     }
 
-    // 채팅방이 없을 때
-    @ExceptionHandler(ChatRoomNotFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleChatRoomNotFoundException(ChatRoomNotFoundException e){
-        System.out.println(e.getMessage());
-        return ApiResponse.fail(e.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-    // 해당 채팅방에 관한 권한이 없을 때
-    @ExceptionHandler(ChatRoomAccessDeniedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleChatRoomAccessDeniedException(ChatRoomAccessDeniedException e){
-        System.out.println(e.getMessage());
-        return ApiResponse.fail(e.getMessage(), HttpStatus.FORBIDDEN);
-    }
-
     // 유저를 찾을 수 없을 때
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleUserNotFoundException(UserNotFoundException e){

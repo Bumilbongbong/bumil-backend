@@ -24,6 +24,7 @@ public class ChatController {
 
 
     @PostMapping
+    @Operation(summary = "Create a Chat", description = "채팅방 생성 API")
     public ResponseEntity<ApiResponse<ChatCreateResponse>> createChat(
             @RequestBody @Valid ChatCreateRequest request
     ) {
@@ -34,6 +35,7 @@ public class ChatController {
     }
 
     @GetMapping
+    @Operation(summary = "Get public chats by filtering", description = "공개된 채팅 목록 조회 API")
     public ResponseEntity<ApiResponse<List<ChatListResponse>>> getPublicChatListResponse(
             @RequestParam(value = "datefilter", required = false) String dateFilter,
             @RequestParam(value = "tag", required = false) String tag
@@ -42,6 +44,7 @@ public class ChatController {
     }
 
     @GetMapping("/me")
+    @Operation(summary = "Get user's chats by filtering", description = "유저의 채팅 목록 조회 API")
     public ResponseEntity<ApiResponse<List<ChatListResponse>>> getUserChatListResponse(
             @RequestParam(value = "datefilter", required = false) String dateFilter,
             @RequestParam(value = "tag", required = false) String tag
@@ -50,6 +53,7 @@ public class ChatController {
     }
 
     @PatchMapping("/close")
+    @Operation(summary = "Close a chat", description = "채팅방 마감 API")
     public ResponseEntity<ApiResponse<Void>> closeChat(
             @RequestBody ChatCloseRequest request
     ) {
@@ -58,6 +62,7 @@ public class ChatController {
     }
 
     @PatchMapping("/setting")
+    @Operation(summary = "Update chat settings", description = "채팅방 설정 변경 API")
     public ResponseEntity<ApiResponse<Void>> updateChatSetting(
             @RequestBody @Valid ChatSettingRequest request
     ) {

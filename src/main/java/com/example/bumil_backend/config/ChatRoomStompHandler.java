@@ -1,8 +1,8 @@
 package com.example.bumil_backend.config;
 
-import com.example.bumil_backend.common.exception.ChatRoomAccessDeniedException;
-import com.example.bumil_backend.common.exception.ChatRoomNotFoundException;
+import com.example.bumil_backend.common.exception.NotAcceptableUserException;
 import com.example.bumil_backend.common.exception.NotLoggedInException;
+import com.example.bumil_backend.common.exception.ResourceNotFoundException;
 import com.example.bumil_backend.entity.ChatRoom;
 import com.example.bumil_backend.entity.Users;
 import com.example.bumil_backend.enums.Role;
@@ -55,11 +55,11 @@ public class ChatRoomStompHandler implements ChannelInterceptor {
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() ->
-                        new ChatRoomNotFoundException("채팅방을 찾을 수 없습니다.")
+                        new ResourceNotFoundException("채팅방을 찾을 수 없습니다.")
                 );
 
         if (chatRoom.isDeleted()) {
-            throw new ChatRoomNotFoundException("삭제된 채팅방입니다.");
+            throw new ResourceNotFoundException("삭제된 채팅방입니다.");
         }
 
         boolean isAuthor =
@@ -69,7 +69,7 @@ public class ChatRoomStompHandler implements ChannelInterceptor {
                 user.getRole() == Role.ADMIN;
 
         if (!isAuthor && !isAdmin) {
-            throw new ChatRoomAccessDeniedException("해당 채팅방에 대한 권한이 없습니다.");
+            throw new NotAcceptableUserException("해당 채팅방에 대한 권한이 없습니다.");
         }
     }
 

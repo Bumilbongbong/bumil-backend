@@ -1,8 +1,7 @@
 package com.example.bumil_backend.service;
 
 import com.example.bumil_backend.common.exception.BadRequestException;
-import com.example.bumil_backend.common.exception.ChatRoomAccessDeniedException;
-import com.example.bumil_backend.common.exception.ChatRoomNotFoundException;
+import com.example.bumil_backend.common.exception.NotAcceptableUserException;
 import com.example.bumil_backend.common.exception.ResourceNotFoundException;
 import com.example.bumil_backend.dto.chat.request.ChatCreateRequest;
 import com.example.bumil_backend.dto.chat.request.ChatCloseRequest;
@@ -192,7 +191,7 @@ public class ChatService {
         Users user = securityUtils.getCurrentUser();
 
         ChatRoom chatRoom = chatRoomRepository.findByIdAndIsDeletedFalse(chatRoomId)
-                .orElseThrow(() -> new ChatRoomNotFoundException("이미 삭제된 채팅방 입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("이미 삭제된 채팅방 입니다."));
         // 관리자 or 작성자
         boolean isAuthor =
                 chatRoom.getAuthor().getId().equals(user.getId());
@@ -201,7 +200,7 @@ public class ChatService {
                 user.getRole() == Role.ADMIN;
 
         if (!isAuthor && !isAdmin) {
-            throw new ChatRoomAccessDeniedException("해당 채팅방에 대한 권한이 없습니다.");
+            throw new NotAcceptableUserException("해당 채팅방에 대한 권한이 없습니다.");
         }
         chatRoom.delete();
     }

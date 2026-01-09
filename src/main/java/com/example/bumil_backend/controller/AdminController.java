@@ -64,6 +64,7 @@ public class AdminController {
     }
 
     @GetMapping("/users")
+    @Operation(summary = "Get all users", description = "모든 유저 조회 API")
     public ResponseEntity<ApiResponse<List<GetAllUsersResponse>>> getAllUsers(){
         return ApiResponse.ok(adminService.getAllUsers(), "모든 유저 조회에 성공하였습니다.");
     }

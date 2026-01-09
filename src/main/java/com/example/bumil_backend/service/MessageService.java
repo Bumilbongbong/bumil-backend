@@ -59,7 +59,7 @@ public class MessageService {
 
         // 채팅방 조회
         ChatRoom chatRoom = chatRoomRepository.findByIdAndIsDeletedFalse(roomId)
-                .orElseThrow(() -> new ChatRoomNotFoundException("해당 채팅방을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 채팅방을 찾을 수 없습니다."));
 
         ChatMessage chatMessage = ChatMessage.builder()
                 .message(request.getMessage())
@@ -93,11 +93,12 @@ public class MessageService {
         throw new JwtAuthenticationException("WebSocket 인증 정보가 없습니다.");
     }
 
+    @Transactional(readOnly = true)
     public MessageListDto getMessages(Long chatRoomId, Pageable pageable) {
         Users user = securityUtils.getCurrentUser();
 
         ChatRoom chatRoom = chatRoomRepository.findByIdAndIsDeletedFalse(chatRoomId)
-                .orElseThrow(() -> new ChatRoomNotFoundException("해당 채팅방을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 채팅방을 찾을 수 없습니다."));
 
 
         // 작성자 or 관리자
@@ -105,7 +106,7 @@ public class MessageService {
         boolean isAdmin = user.getRole() == Role.ADMIN;
 
         if (!isAuthor && !isAdmin) {
-            throw new ChatRoomAccessDeniedException("해당 채팅방에 대한 권한이 없습니다.");
+            throw new NotAcceptableUserException("해당 채팅방에 대한 권한이 없습니다.");
         }
 
         List<ChatMessage> messages;
