@@ -32,8 +32,8 @@ public class UserController {
 
     @PutMapping
     @Operation(summary = "Update User Info", description = "유저 정보 수정 API")
-    public ResponseEntity<ApiResponse<UserUpdateResponse>> updateUser(HttpServletRequest httpServletRequest, @Valid @RequestBody UserUpdateRequest request){
-        UserUpdateResponse response = userService.updateUser(httpServletRequest, request);
+    public ResponseEntity<ApiResponse<UserUpdateResponse>> updateUser(@Valid @RequestBody UserUpdateRequest request){
+        UserUpdateResponse response = userService.updateUser(request);
         return ApiResponse.ok(response, "회원 정보를 성공적으로 수정하였습니다.");
     }
 

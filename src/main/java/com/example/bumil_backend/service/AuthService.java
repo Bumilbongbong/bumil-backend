@@ -46,8 +46,13 @@ public class AuthService {
             throw new UserAlreadyExistException("이미 가입된 이메일입니다.");
         }
 
+        if(userRepository.existsByStudentNumAndIsDeletedFalse(request.getStudentNum())){
+            throw new UserAlreadyExistException("이미 가입된 학번입니다.");
+        }
+
         Users user = Users.builder()
                 .password(passwordEncoder.encode(request.getPassword()))
+                .studentNum(request.getStudentNum())
                 .name(request.getName())
                 .email(request.getEmail())
                 .build();

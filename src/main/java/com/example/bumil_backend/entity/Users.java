@@ -22,7 +22,7 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @Email
     private String email;
 
@@ -31,6 +31,9 @@ public class Users {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false, length = 4, unique = true)
+    private Integer studentNum;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -84,9 +87,10 @@ public class Users {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void updateInfo(String email, String name) {
+    public void updateInfo(String email, String name, Integer studentNum) {
         this.email = email;
         this.name = name;
+        this.studentNum = studentNum;
     }
 
     public void updatePassword(String newHashedPassword) {

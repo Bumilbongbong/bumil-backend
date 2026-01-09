@@ -1,6 +1,7 @@
 package com.example.bumil_backend.service;
 
 import com.example.bumil_backend.common.exception.BadRequestException;
+import com.example.bumil_backend.common.exception.ResourceNotFoundException;
 import com.example.bumil_backend.dto.user.request.UserPasswordUpdateRequest;
 import com.example.bumil_backend.dto.user.request.UserUpdateRequest;
 import com.example.bumil_backend.dto.user.response.UpdateUserPasswordResponse;
@@ -29,7 +30,7 @@ public class UserService {
                 .getName();
 
         Users user = userRepository.findByEmailAndIsDeletedFalse(email)
-                .orElseThrow(() -> new UsernameNotFoundException("유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("유저가 존재하지 않습니다."));
 
         return UserDetailResponse.builder()
                 .userId(user.getId())
@@ -40,23 +41,25 @@ public class UserService {
     }
 
     @Transactional
-    public UserUpdateResponse updateUser(HttpServletRequest httpServletRequest, UserUpdateRequest request) {
+    public UserUpdateResponse updateUser(UserUpdateRequest request) {
         String email = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
 
         Users user = userRepository.findByEmailAndIsDeletedFalse(email)
-                .orElseThrow(() -> new UsernameNotFoundException("유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("유저가 존재하지 않습니다."));
 
         user.updateInfo(
                 request.getEmail(),
-                request.getName()
+                request.getName(),
+                request.getStudentNum()
         );
 
         return UserUpdateResponse.builder()
                 .userId(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
+                .studentNum(user.getStudentNum())
                 .createdAt(user.getCreatedAt())
                 .build();
     }
@@ -68,7 +71,7 @@ public class UserService {
                 .getName();
 
         Users user = userRepository.findByEmailAndIsDeletedFalse(email)
-                .orElseThrow(() -> new UsernameNotFoundException("유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("유저가 존재하지 않습니다."));
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new BadRequestException("현재 비밀번호가 일치하지 않습니다.");

@@ -12,6 +12,7 @@ public class UserUpdateResponse {
     private Long userId;
     private String email;
     private String name;
+    private Integer studentNum;
     private LocalDateTime createdAt;
 
     public static UserUpdateResponse from(Users user) {

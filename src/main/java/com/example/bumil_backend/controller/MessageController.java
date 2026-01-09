@@ -24,6 +24,7 @@ public class MessageController {
     private final MessageService messageService;
 
     @PatchMapping("/{messageId}")
+    @Operation(summary = "Delete Message", description = "메세지 삭제 API")
     public ResponseEntity<ApiResponse<Void>> deleteMessage(
             @PathVariable Long messageId
     ){

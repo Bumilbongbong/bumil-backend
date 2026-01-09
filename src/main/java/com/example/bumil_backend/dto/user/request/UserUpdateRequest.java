@@ -10,4 +10,7 @@ public class UserUpdateRequest {
 
     @NotBlank
     private String name;
+
+    @NotBlank
+    private Integer studentNum;
 }
