@@ -62,6 +62,15 @@ public class ChatRoom {
     @Builder.Default
     private List<ChatMessage> chatMessages = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "chatRoom",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Builder.Default
+    private List<ChatRoomReaction> reactions = new ArrayList<>();
+
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();

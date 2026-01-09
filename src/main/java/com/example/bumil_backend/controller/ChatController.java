@@ -6,7 +6,6 @@ import com.example.bumil_backend.dto.chat.request.ChatCreateRequest;
 import com.example.bumil_backend.dto.chat.request.ChatSettingRequest;
 import com.example.bumil_backend.dto.chat.response.ChatCreateResponse;
 import com.example.bumil_backend.dto.chat.response.ChatListResponse;
-import com.example.bumil_backend.dto.chat.response.PublicChatListResponse;
 import com.example.bumil_backend.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -79,15 +78,6 @@ public class ChatController {
     }
 
 
-    @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<PublicChatListResponse>>> searchPublicChats(
-            @RequestParam("query") String query
-    ) {
-        return ApiResponse.ok(
-                chatService.searchPublicChats(query),
-                "공개 채팅방 검색에 성공했습니다."
-        );
-    }
 
 
 
