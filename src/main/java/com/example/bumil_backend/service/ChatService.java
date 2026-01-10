@@ -31,6 +31,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -69,6 +71,7 @@ public class ChatService {
                 .build();
     }
 
+    //공개된 채팅방 조회
     @Transactional(readOnly = true)
     public List<ChatListResponse> getPublicChatList(String dateFilter, String tag) {
 
@@ -76,26 +79,57 @@ public class ChatService {
         userRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 유저입니다."));
 
-        // 유효성 검증
         validateFilters(dateFilter, tag);
 
-        // 정렬 조건
-        Sort sort = "OLDEST".equals(dateFilter) ? Sort.by("createdAt").ascending() : Sort.by("createdAt").descending();
+        Sort sort = "OLDEST".equals(dateFilter)
+                ? Sort.by("createdAt").ascending()
+                : Sort.by("createdAt").descending();
 
-        // String -> Enum
-        Tag searchTag = (tag != null && !tag.isBlank()) ? Tag.valueOf(tag.toUpperCase()) : null;
+        Tag searchTag = (tag != null && !tag.isBlank())
+                ? Tag.valueOf(tag.toUpperCase())
+                : null;
 
-        List<ChatRoom> chatRooms = chatRoomRepository.findAllByTagAndIsDeletedFalse(searchTag, sort);
+        List<ChatRoom> chatRooms =
+                chatRoomRepository.findAllByTagAndIsDeletedFalse(searchTag, sort);
+
+        // chatRoomId -> LIKE 개수
+        Map<Long, Long> likeCountMap = chatRooms.stream()
+                .collect(Collectors.toMap(
+                        ChatRoom::getId,
+                        chatRoom -> chatRoom.getReactions().stream()
+                                .filter(r -> r.getReactionType() == ReactionType.LIKE)
+                                .count()
+                ));
+
+        // 최대 LIKE 수 가진 chatRoomId
+        Long bestChatRoomId = likeCountMap.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .filter(e -> e.getValue() > 0)
+                .map(Map.Entry::getKey)
+                .orElse(null);
 
         return chatRooms.stream()
-                .map(chatRoom -> ChatListResponse.builder()
-                        .chatRoomId(chatRoom.getId())
-                        .title(chatRoom.getTitle())
-                        .tag(chatRoom.getTag().name())
-                        .author(chatRoom.getAuthor().getName())
-                        .createdAt(chatRoom.getCreatedAt())
-                        .build()
-                )
+                .map(chatRoom -> {
+
+                    int likeCnt = (int) chatRoom.getReactions().stream()
+                            .filter(r -> r.getReactionType() == ReactionType.LIKE)
+                            .count();
+
+                    int dislikeCnt = (int) chatRoom.getReactions().stream()
+                            .filter(r -> r.getReactionType() == ReactionType.DISLIKE)
+                            .count();
+
+                    return ChatListResponse.builder()
+                            .chatRoomId(chatRoom.getId())
+                            .best(chatRoom.getId().equals(bestChatRoomId))
+                            .likeCnt(likeCnt)
+                            .dislikeCnt(dislikeCnt)
+                            .title(chatRoom.getTitle())
+                            .tag(chatRoom.getTag().name())
+                            .author(chatRoom.getAuthor().getName())
+                            .createdAt(chatRoom.getCreatedAt())
+                            .build();
+                })
                 .toList();
     }
 

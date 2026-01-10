@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 @Data
 public class ChatListResponse {
     private Long chatRoomId;
+    private boolean best;
+    private Integer likeCnt;
+    private Integer dislikeCnt;
     private String title;
     private String tag;
     private String author;
