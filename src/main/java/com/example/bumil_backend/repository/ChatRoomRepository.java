@@ -47,7 +47,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             Sort sort
     );
 
-
+    Optional<ChatRoom> findByIdAndIsDeletedFalseAndIsPublicTrue(Long chatId);
 }
 
 
