@@ -1,13 +1,12 @@
 package com.example.bumil_backend.controller;
 
 import com.example.bumil_backend.common.ApiResponse;
-import com.example.bumil_backend.dto.chat.ChatReactionResponse;
 import com.example.bumil_backend.dto.chat.request.ChatCloseRequest;
 import com.example.bumil_backend.dto.chat.request.ChatCreateRequest;
-import com.example.bumil_backend.dto.chat.request.ChatReactionRequest;
 import com.example.bumil_backend.dto.chat.request.ChatSettingRequest;
 import com.example.bumil_backend.dto.chat.response.ChatCreateResponse;
 import com.example.bumil_backend.dto.chat.response.ChatListResponse;
+import com.example.bumil_backend.dto.chat.response.PublicChatListResponse;
 import com.example.bumil_backend.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -79,10 +78,18 @@ public class ChatController {
         return ApiResponse.ok(null, "채팅이 삭제되었습니다.");
     }
 
-    @PatchMapping("/reaction")
-    @Operation(summary = "리액션 설정", description = "공개된 채팅방에 리액션 설정 API")
-    public ResponseEntity<ApiResponse<ChatReactionResponse>> reaction(@RequestBody @Valid ChatReactionRequest request){
-        chatService.reaction(request);
-        return ApiResponse.ok(null, "공감 설정이 완료되었습니다.");
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<PublicChatListResponse>>> searchPublicChats(
+            @RequestParam("query") String query
+    ) {
+        return ApiResponse.ok(
+                chatService.searchPublicChats(query),
+                "공개 채팅방 검색에 성공했습니다."
+        );
     }
+
+
+
+
 }

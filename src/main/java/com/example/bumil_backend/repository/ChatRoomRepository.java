@@ -47,7 +47,17 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             Sort sort
     );
 
-    Optional<ChatRoom> findByIdAndIsDeletedFalseAndIsPublicTrue(Long chatId);
+    @Query("""
+        select c
+        from ChatRoom c
+        where c.isPublic = true
+          and c.isDeleted = false
+          and lower(c.title) like lower(concat('%', :keyword, '%'))
+        order by c.createdAt desc
+    """)
+    List<ChatRoom> searchPublicChatsByTitle(@Param("keyword") String keyword);
+
+
 }
 
 
