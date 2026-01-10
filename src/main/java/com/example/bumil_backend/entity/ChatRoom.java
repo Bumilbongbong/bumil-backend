@@ -1,7 +1,6 @@
 package com.example.bumil_backend.entity;
 
 import com.example.bumil_backend.enums.ChatTags;
-import com.example.bumil_backend.enums.Tag;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -87,7 +86,7 @@ public class ChatRoom {
     }
 
 
-    public void setAnonymous(boolean anonymous) {
+    public void changeAnonymous(boolean anonymous) {
         this.anonymous = anonymous;
     }
 
@@ -95,8 +94,15 @@ public class ChatRoom {
         this.isPublic = isPublic;
     }
 
-
-    public void setTag(ChatTags tag) {
+    public void changeTag(ChatTags tag) {
         this.tag = tag;
+    }
+
+    public void addReaction(ChatRoomReaction savedReaction) {
+        this.reactions.add(savedReaction);
+    }
+
+    public void removeReaction(ChatRoomReaction existingReaction) {
+        this.reactions.remove(existingReaction);
     }
 }

@@ -29,4 +29,8 @@ public class ChatRoomReaction {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     private ReactionType reactionType;
+
+    public void changeReactionType(ReactionType reactionType) {
+        this.reactionType = reactionType;
+    }
 }

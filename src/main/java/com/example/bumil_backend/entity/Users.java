@@ -109,4 +109,12 @@ public class Users {
     public void delete() {
         this.isDeleted = true;
     }
+
+    public void addReaction(ChatRoomReaction savedReaction) {
+        this.reactions.add(savedReaction);
+    }
+
+    public void removeReaction(ChatRoomReaction existingReaction) {
+        this.reactions.remove(existingReaction);
+    }
 }
